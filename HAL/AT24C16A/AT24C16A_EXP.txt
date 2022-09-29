@@ -1,0 +1,46 @@
+Electrically Erasable Programmable Read Only Memory: 
+
+1)EEPROM is used for saving a non-volatile data
+like program data or any run time data that must be saved
+
+2)communicate with i2c with its slave address
+
+3)Internally organized with 128 pages of 16 bytes each, the 16K requires
+an 11-bit data word address for random word addressing
+
+4)slave address of this device is “1010xxx” xxx ->A0 A1 A2
+
+5)We will work on 24C16 on our course.
+ Any EEPROM type has two addresses:
+- slave address.
+- location address.
+-->Slave address will be “1010 xxx” as we mentioned, the
+least three significant bits will be used to write the 10th
+,9th and 8th bits of locations address, and the remaining
+8 bits of location address will be sent at the next byte.
+--> We can consider these three bit as the number of page(8 PAGES),
+which we will virtually divide the memory into 8 pages,
+the number of page will be the value of these three
+bits, the size of one page will be 256 Bytes.
+
+6)(write)assume we will write “A” on the 1265 address location:
+so the address will be “100 1111 0001”, so the page number will be “100” so the
+remaining slave address will be “100”,
+let write the frame:
+--> write a start condition.
+--> write SLA+W “1010 100 0”. (slave address 1010 100 + 0-->write )
+--> write remaining location address as a Data “11110001”.(A ascii will be written here)
+--> write “A” character “0100 0001”. --> A in ascii (binary)
+--> write stop condition
+
+7)(read)assume we will read from the 1265 address location:
+so the address will be “100 1111 0001”, so the page number will be “100” so the
+remaining slave address will be “100”,
+let write the frame:
+--> write a start condition.
+--> write SLA+W “1010 100 0”.
+--> write remaining location address as a Data “11110001”.
+--> send a repeated start condition.
+--> write SLA+R “1010 100 1”.
+--> read the data from this location.
+--> write stop condition.
